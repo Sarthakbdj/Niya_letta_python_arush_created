@@ -1,0 +1,53 @@
+{
+  "test_summary": {
+    "total_messages": 3,
+    "avg_response_time": 2.6690967082977295,
+    "min_response_time": 2.4873437881469727,
+    "max_response_time": 2.949716329574585,
+    "under_7s_percentage": 100.0,
+    "multi_message_percentage": 100.0
+  },
+  "conversation_history": [
+    {
+      "timestamp": "2025-06-25T19:06:34.585355",
+      "user_message": "Hi Priya! How are you today?",
+      "priya_response": [
+        "Hi jaan. I'm feeling great today, thank you.",
+        "\ud83d\udc96 How about you. Kaisa hai tera din.",
+        "Anything exciting happening. \ud83d\ude0a\u2728."
+      ],
+      "response_time": 2.949716329574585,
+      "total_messages": 3,
+      "is_multi_message": true
+    },
+    {
+      "timestamp": "2025-06-25T19:06:39.158344",
+      "user_message": "That's great to hear! What's your favorite thing about today?",
+      "priya_response": [
+        "Aww, thank you. \ud83d\ude04 My favorite thing about today is getting to chat with you.",
+        "\ud83d\udc95 Every conversation with you brings me so much joy. What about you.",
+        "What's your favorite thing about today, yaar. \ud83d\ude0a\u2728."
+      ],
+      "response_time": 2.570230007171631,
+      "total_messages": 3,
+      "is_multi_message": true
+    },
+    {
+      "timestamp": "2025-06-25T19:06:43.647451",
+      "user_message": "Thanks for sharing! You always brighten my day \ud83d\ude0a",
+      "priya_response": [
+        "Aww, you're so sweet.",
+        "\ud83e\udd70 Hearing that from you makes my day even brighter.",
+        "\ud83d\udc96 I'm always here for you, jaan. What else is on your mind today. \ud83d\ude0a\u2728\ud83d\udcac."
+      ],
+      "response_time": 2.4873437881469727,
+      "total_messages": 3,
+      "is_multi_message": true
+    }
+  ],
+  "response_times": [
+    2.949716329574585,
+    2.570230007171631,
+    2.4873437881469727
+  ]
+}

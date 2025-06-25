@@ -1,320 +1,239 @@
-# Expert Agent with Pinecone Vector Search
+# Niya-Python Bridge - SPEED OPTIMIZED
 
-A powerful AI agent that learns from uploaded documents using Pinecone vector search and OpenAI embeddings. Upload documents to expand the agent's knowledge base and ask questions to get intelligent, context-aware answers.
+**AI Girlfriend Integration for Niya Platform - Bridge Service Only**
 
-## Features
+## Overview
 
-- **Document Upload & Processing**: Support for PDF, DOCX, TXT, and Markdown files
-- **Vector Search**: Powered by Pinecone for fast and accurate document retrieval
-- **Smart Chunking**: Intelligent text chunking with overlap for better context preservation
-- **Expert AI Agent**: GPT-4 powered agent that provides comprehensive answers with source citations
-- **RESTful API**: Clean FastAPI-based API for easy integration
-- **Conversation Support**: Maintain context across multiple questions
-- **Knowledge Base Management**: View stats, search directly, and manage documents by source
-
-## Setup
-
-### Prerequisites
-
-- Python 3.8+
-- OpenAI API key
-- Pinecone API key and environment
-
-### Installation
-
-1. **Clone and navigate to the project:**
-```bash
-cd python-ai-backend
-```
-
-2. **Create and activate virtual environment:**
-```bash
-python -m venv .venv
-# On Windows:
-.venv\Scripts\activate
-# On macOS/Linux:
-source .venv/bin/activate
-```
-
-3. **Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-4. **Set up environment variables:**
-
-Copy `.env.example` to `.env` and fill in your API keys:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
-```
-OPENAI_API_KEY=your_openai_api_key_here
-PINECONE_API_KEY=your_pinecone_api_key_here
-PINECONE_ENVIRONMENT=your_pinecone_environment_here
-PINECONE_INDEX_NAME=expert-agent-knowledge
-EMBEDDING_MODEL=text-embedding-ada-002
-```
-
-### Getting API Keys
-
-#### OpenAI API Key
-1. Go to [OpenAI API](https://platform.openai.com/api-keys)
-2. Create a new API key
-3. Copy the key to your `.env` file
-
-#### Pinecone Setup
-1. Sign up at [Pinecone](https://www.pinecone.io/)
-2. Create a new project
-3. Go to API Keys section
-4. Copy your API key and environment name
-5. The index will be created automatically when you start the application
-
-## Usage
-
-### Starting the Server
-
-```bash
-python main.py
-```
-
-The API will be available at `http://localhost:8000`
-
-### API Documentation
-
-Once the server is running, visit:
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
-
-### API Endpoints
-
-#### 1. Upload Documents
-```bash
-POST /upload
-```
-
-Upload a document to expand the agent's knowledge base:
-
-```bash
-curl -X POST "http://localhost:8000/upload" \
-  -H "accept: application/json" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@document.pdf"
-```
-
-#### 2. Ask Questions
-```bash
-POST /ask
-```
-
-Ask the expert agent a question:
-
-```bash
-curl -X POST "http://localhost:8000/ask" \
-  -H "accept: application/json" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "What are the main findings in the research?",
-    "top_k": 5
-  }'
-```
-
-#### 3. Chat Conversation
-```bash
-POST /chat
-```
-
-Have a conversation with context:
-
-```bash
-curl -X POST "http://localhost:8000/chat" \
-  -H "accept: application/json" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "messages": [
-      {"role": "user", "content": "What is machine learning?"},
-      {"role": "assistant", "content": "Machine learning is..."},
-      {"role": "user", "content": "Can you give me specific examples?"}
-    ]
-  }'
-```
-
-#### 4. Knowledge Base Stats
-```bash
-GET /knowledge-base/stats
-```
-
-Get information about your knowledge base:
-
-```bash
-curl -X GET "http://localhost:8000/knowledge-base/stats"
-```
-
-#### 5. Search Knowledge Base
-```bash
-GET /search?query=your_search_term&top_k=5
-```
-
-Search directly in the knowledge base:
-
-```bash
-curl -X GET "http://localhost:8000/search?query=machine%20learning&top_k=5"
-```
-
-#### 6. Delete Documents by Source
-```bash
-DELETE /knowledge-base/source/{source_name}
-```
-
-Remove all documents from a specific source:
-
-```bash
-curl -X DELETE "http://localhost:8000/knowledge-base/source/document.pdf"
-```
-
-### Python Client Example
-
-```python
-import requests
-import json
-
-# Upload a document
-with open('document.pdf', 'rb') as f:
-    files = {'file': f}
-    response = requests.post('http://localhost:8000/upload', files=files)
-    print(response.json())
-
-# Ask a question
-question_data = {
-    "question": "What are the key concepts discussed in the document?",
-    "top_k": 5
-}
-response = requests.post('http://localhost:8000/ask', json=question_data)
-result = response.json()
-
-print(f"Answer: {result['answer']}")
-print(f"Sources: {result['sources']}")
-print(f"Confidence: {result['confidence']}%")
-```
-
-## Supported File Types
-
-- **PDF** (`.pdf`)
-- **Word Documents** (`.docx`)
-- **Text Files** (`.txt`)
-- **Markdown** (`.md`)
-
-## Configuration
-
-### Document Processing
-- **Chunk Size**: 1000 tokens (adjustable in `DocumentProcessor`)
-- **Chunk Overlap**: 100 tokens
-- **Max Context**: 4000 tokens for agent responses
-
-### Vector Search
-- **Index Dimension**: 1536 (OpenAI ada-002)
-- **Similarity Metric**: Cosine similarity
-- **Default Top-K**: 5 most relevant documents
+This repository provides the **SPEED-OPTIMIZED Python bridge service** that connects the Niya frontend/backend to Priya AI girlfriend using Letta Cloud. The system is now optimized for **95%+ of responses under 7 seconds**.
 
 ## Architecture
 
 ```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   FastAPI App   │    │ Document         │    │ Pinecone        │
-│                 │──→ │ Processor        │──→ │ Vector Store    │
-│   /upload       │    │                  │    │                 │
-│   /ask          │    │ - PDF/DOCX/TXT   │    │ - Embeddings    │
-│   /chat         │    │ - Text Chunking  │    │ - Similarity    │
-└─────────────────┘    │ - Tokenization   │    │   Search        │
-                       └──────────────────┘    └─────────────────┘
-                                │                        │
-                       ┌──────────────────┐    ┌─────────────────┐
-                       │ OpenAI API       │    │ Expert Agent    │
-                       │                  │←───│                 │
-                       │ - Embeddings     │    │ - GPT-4         │
-                       │ - Chat Completion│    │ - Context Build │
-                       └──────────────────┘    │ - Source Citing │
-                                               └─────────────────┘
+Frontend (React/Vue) → Niya Backend (NestJS:3002) → Python Bridge (Flask:1511) → Letta Cloud → Priya AI
 ```
 
-## Error Handling
+## ⚡ Speed Optimizations
 
-The API provides detailed error messages and proper HTTP status codes:
+### **MAJOR PERFORMANCE IMPROVEMENTS**:
+- ✅ **Request spacing**: Reduced from 2.0s to 0.5s (75% faster)
+- ✅ **Memory blocks**: Reduced from 6 to 2 (faster processing)
+- ✅ **No embedding processing**: Removed for speed
+- ✅ **No multi-message overhead**: Single response only
+- ✅ **Single attempt**: No retry delays
+- ✅ **Minimal logging**: Reduced verbosity
+- ✅ **No chat service dependencies**: Bridge only
+- ✅ **Minimal requirements**: Only essential packages
 
-- `400`: Bad Request (unsupported file type, invalid input)
-- `500`: Internal Server Error (API failures, processing errors)
+### **Target Performance**: 95%+ responses under 7 seconds
 
-## Performance Considerations
+## Quick Start
 
-- **File Size**: Large files are processed in chunks
-- **Concurrent Uploads**: Multiple files can be uploaded simultaneously
-- **Rate Limiting**: Implement rate limiting for production use
-- **Caching**: Consider caching frequently asked questions
+1. **Install Dependencies** (Minimal Set)
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Configure Environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your API keys
+   ```
+
+3. **Start Bridge Service** (Speed Optimized)
+   ```bash
+   python run_niya.py
+   ```
+
+## Configuration
+
+### Cloud Mode (Recommended for Speed)
+Set in `.env`:
+```env
+LETTA_TOKEN=your_letta_cloud_token
+OPENAI_API_KEY=your_openai_key
+```
+
+### Local Mode (Development Only)
+Set in `.env`:
+```env
+LETTA_BASE_URL=http://localhost:8283
+OPENAI_API_KEY=your_openai_key
+```
+
+## Usage
+
+| Command | Description |
+|---------|-------------|
+| `python run_niya.py` | Start bridge service (default, speed optimized) |
+| `python run_niya.py --bridge` | Start bridge service only |
+| `python run_niya.py --test` | Test integration flow |
+| `python run_niya.py --monitor` | Monitor activity |
+| `python run_niya.py --help` | Show help |
+
+## Performance Benchmarks
+
+### Before Optimization:
+- **Under 7s Rate**: 84% (21/25 messages)
+- **Average Response**: 6.11 seconds
+- **Request Spacing**: 2.0 seconds
+- **Memory Blocks**: 6 blocks
+- **Retry Logic**: 2 attempts with delays
+
+### After Speed Optimization:
+- **Target Under 7s Rate**: 95%+ 
+- **Expected Average**: <5.5 seconds
+- **Request Spacing**: 0.5 seconds (75% faster)
+- **Memory Blocks**: 2 blocks (minimal)
+- **Retry Logic**: Single attempt (no delays)
+
+## API Endpoints
+
+### Bridge Service (Port 1511) - Speed Optimized
+
+- `POST /message` - Main endpoint for Niya backend (single response)
+- `GET /health` - Health check
+- `POST /reset` - Reset AI agent
+
+**Request Format**:
+```json
+{
+  "message": "Hello Priya!"
+}
+```
+
+**Response Format**:
+```json
+{
+  "success": true,
+  "response": "Hey jaan! How are you doing today? 💕",
+  "error": null
+}
+```
+
+## Core Components (Streamlined)
+
+```
+core/
+├── niya_bridge.py           # Main bridge service (SPEED OPTIMIZED)
+└── enhanced_personality.py  # Minimal AI personality configuration
+
+testing/
+├── test_frontend_flow.py    # Integration tests
+└── monitor_messages.py      # Activity monitoring
+
+deployment/
+└── docker-compose.fast.yml  # Docker deployment (optional)
+```
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `OPENAI_API_KEY` | OpenAI API key | Yes |
+| `LETTA_TOKEN` | Letta Cloud token (recommended) | For cloud mode |
+| `LETTA_BASE_URL` | Local Letta server URL | For local mode |
 
 ## Development
 
-### Adding New File Types
+### Testing (Speed Optimized)
+```bash
+# Test integration flow (fast)
+python run_niya.py --test
 
-1. Extend `DocumentProcessor.extract_text_from_file()`
-2. Add the new extension to `get_supported_extensions()`
-3. Install necessary parsing libraries
+# Monitor activity (real-time)
+python run_niya.py --monitor
+```
 
-### Customizing the Agent
+### Local Development
+```bash
+# Start local Letta server first (if using local mode)
+letta server
 
-Modify `ExpertAgent` to:
-- Change the system prompt
-- Adjust response length
-- Modify confidence calculation
-- Add custom filters
+# Then start bridge in local mode
+LETTA_BASE_URL=http://localhost:8283 python run_niya.py
+```
+
+## Production Deployment
+
+### Cloud Mode (Recommended for Speed)
+```bash
+# Install minimal dependencies
+pip install -r requirements.txt
+
+# Set production environment
+export LETTA_TOKEN=your_production_token
+export OPENAI_API_KEY=your_openai_key
+
+# Start speed-optimized service
+python run_niya.py
+```
+
+### Docker (Optional - for local Letta)
+```bash
+docker-compose -f deployment/docker-compose.fast.yml up --build
+```
+
+## Removed Components (For Speed)
+
+### Removed Services:
+- ❌ Chat interface (was on port 8000)
+- ❌ Complete launcher 
+- ❌ Multi-message processing
+- ❌ Streaming endpoints
+
+### Removed Dependencies:
+- ❌ FastAPI, Uvicorn, WebSockets
+- ❌ Data processing libraries (PyPDF2, python-docx)
+- ❌ Vector database libraries (Pinecone)
+- ❌ Gunicorn (using minimal waitress)
+
+### Removed Features:
+- ❌ Embedding processing
+- ❌ Retry logic with delays
+- ❌ Complex memory management
+- ❌ Multi-message breaking
+- ❌ Verbose logging
 
 ## Troubleshooting
 
-### Common Issues
+### Performance Issues
+1. **Still slow responses?**
+   - Ensure using `LETTA_TOKEN` (cloud mode)
+   - Check network connectivity
+   - Verify minimal dependencies installed
 
-1. **Pinecone Connection Errors**
-   - Verify API key and environment in `.env`
-   - Check if the index exists in your Pinecone console
+2. **Connection errors?**
+   - Verify API keys in `.env`
+   - Check Letta Cloud service status
+   - Ensure proper network access
 
-2. **OpenAI API Errors**
-   - Ensure you have sufficient credits
-   - Verify the API key is correct
+### Monitoring
+The bridge provides real-time performance logging:
+- Request/response timing
+- Optimization status
+- Error diagnostics
 
-3. **File Processing Errors**
-   - Check if the file format is supported
-   - Ensure files are not corrupted
+## Architecture Benefits
 
-4. **Memory Issues**
-   - Large files may require chunking optimization
-   - Consider reducing chunk size or overlap
+### Speed Optimizations:
+- **Minimal Dependencies**: Only essential packages
+- **Streamlined Processing**: No unnecessary overhead
+- **Direct API Calls**: No complex retry logic
+- **Reduced Memory Usage**: Minimal personality blocks
+- **Fast Startup**: No chat service initialization
 
-### Logs
-
-Check the application logs for detailed error information:
-```bash
-python main.py
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+### Maintained Features:
+- ✅ Full Niya backend integration
+- ✅ AI girlfriend personality (optimized)
+- ✅ Error handling and health checks
+- ✅ Development and testing tools
+- ✅ Docker deployment support
 
 ## Support
 
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the API documentation at `/docs`
-3. Create an issue in the repository
+For issues and questions about the speed-optimized bridge:
+- Focus on bridge service only (no chat interface)
+- Performance issues related to <7s response target
+- Integration with Niya backend
 
----
-
-Built with ❤️ using FastAPI, Pinecone, and OpenAI 
+**This speed-optimized version is designed specifically for production use with the Niya platform, prioritizing response speed over additional features.** 

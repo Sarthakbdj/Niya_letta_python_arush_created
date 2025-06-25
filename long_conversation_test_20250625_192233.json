@@ -1,0 +1,110 @@
+{
+  "test_summary": {
+    "total_messages": 15,
+    "successful_messages": 4,
+    "failed_messages": 11,
+    "total_time": 202.4550859928131,
+    "avg_response_time": 2.3019399642944336,
+    "corruption_count": 0
+  },
+  "detailed_results": [
+    {
+      "message_num": 1,
+      "response_time": 2.175661087036133,
+      "success": true,
+      "message_count": 3,
+      "agent_message_count": 1,
+      "corruption_detected": false
+    },
+    {
+      "message_num": 2,
+      "response_time": 1.924882173538208,
+      "success": true,
+      "message_count": 3,
+      "agent_message_count": 1,
+      "corruption_detected": false
+    },
+    {
+      "message_num": 3,
+      "response_time": 2.373337745666504,
+      "success": true,
+      "message_count": 3,
+      "agent_message_count": 2,
+      "corruption_detected": false
+    },
+    {
+      "message_num": 4,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 5,
+      "response_time": 2.7338788509368896,
+      "success": true,
+      "message_count": 3,
+      "agent_message_count": 2,
+      "corruption_detected": false
+    },
+    {
+      "message_num": 6,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 7,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 8,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 9,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 10,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 11,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 12,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 13,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 14,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    },
+    {
+      "message_num": 15,
+      "response_time": 15.0,
+      "success": false,
+      "error": "Timeout"
+    }
+  ]
+}
