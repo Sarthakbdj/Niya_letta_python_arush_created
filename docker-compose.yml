@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Letta Server for Priya AI Girlfriend
+  letta:
+    image: letta/letta:latest
+    container_name: niya-letta-server
+    ports:
+      - "8283:8283"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+    volumes:
+      - letta_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8283/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # PostgreSQL Database for Letta
+  postgres:
+    image: postgres:15
+    container_name: niya-postgres
+    environment:
+      - POSTGRES_DB=letta
+      - POSTGRES_USER=letta
+      - POSTGRES_PASSWORD=letta
+    volumes:
+      - letta_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  # Main Niya Python Application
+  niya-app:
+    build: .
+    container_name: niya-main-app
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - PINECONE_INDEX_NAME=${PINECONE_INDEX_NAME}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - LETTA_BASE_URL=http://letta:8283
+    depends_on:
+      - letta
+    volumes:
+      - ./:/app
+      - /app/__pycache__
+    restart: unless-stopped
+
+volumes:
+  letta_pgdata:
+    driver: local
+  letta_data:
+    driver: local 
