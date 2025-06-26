@@ -216,7 +216,7 @@ class NiyaBridge:
             agent = self.letta_client.agents.create(
                 name=f"niya_priya_speed_{int(time.time())}",
                 memory_blocks=minimal_memory_blocks,  # Reduced from 6 to 2 blocks
-                model="gpt-4o-mini",  # GPT-4o-mini: fast, efficient, perfect for chat
+                model="openai/gpt-4o-mini",  # Fixed: Use provider/model format for Letta Cloud API
                 embedding=None,  # SPEED OPTIMIZATION: Remove embedding processing
                 tools=[]  # No tools for maximum speed
             )
