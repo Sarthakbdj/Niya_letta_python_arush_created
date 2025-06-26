@@ -174,6 +174,13 @@ class NiyaBridge:
             agents = self.letta_client.agents.list()
             logger.info(f"✅ Letta connected - found {len(agents)} existing agents")
             
+            # Try to get available models for debugging
+            try:
+                models = self.letta_client.models.list()
+                logger.info(f"📋 Available models: {[m.id if hasattr(m, 'id') else str(m) for m in models[:5]]}")
+            except Exception as e:
+                logger.info(f"⚠️ Could not list models: {e}")
+            
             # Clean up existing agents for fresh start
             if len(agents) > 0:
                 logger.info("🧹 Cleaning up existing agents for fresh start...")
@@ -205,13 +212,31 @@ class NiyaBridge:
             ]
             
             # Create agent with minimal configuration for MAXIMUM SPEED
-            agent = self.letta_client.agents.create(
-                name=f"niya_priya_speed_{int(time.time())}",
-                memory_blocks=minimal_memory_blocks,  # Reduced from 6 to 2 blocks
-                model="openai/gpt-4o-mini",  # Already optimized
-                embedding=None,  # SPEED OPTIMIZATION: Remove embedding processing
-                tools=[]  # No tools for maximum speed
-            )
+            # Try different model formats for Letta Cloud compatibility
+            try:
+                # First try with default model (no model parameter)
+                agent = self.letta_client.agents.create(
+                    name=f"niya_priya_speed_{int(time.time())}",
+                    memory_blocks=minimal_memory_blocks,  # Reduced from 6 to 2 blocks
+                    embedding=None,  # SPEED OPTIMIZATION: Remove embedding processing
+                    tools=[]  # No tools for maximum speed
+                )
+            except Exception:
+                # Fallback: try with different model format
+                try:
+                    agent = self.letta_client.agents.create(
+                        name=f"niya_priya_speed_{int(time.time())}",
+                        memory_blocks=minimal_memory_blocks,
+                        model="gpt-4",  # Try standard format
+                        embedding=None,
+                        tools=[]
+                    )
+                except Exception:
+                    # Final fallback: minimal parameters
+                    agent = self.letta_client.agents.create(
+                        name=f"niya_priya_speed_{int(time.time())}",
+                        memory_blocks=minimal_memory_blocks
+                    )
             
             self.agent_id = agent.id
             logger.info(f"💖 Created speed-optimized Priya agent: {self.agent_id}")
