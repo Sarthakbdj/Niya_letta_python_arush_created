@@ -162,6 +162,7 @@ class NiyaBridge:
         def reset_agent():
             """Reset Priya agent"""
             try:
+                logger.info("🔄 Manual agent reset requested")
                 self.create_agent()
                 return jsonify({
                     'success': True,
@@ -169,6 +170,7 @@ class NiyaBridge:
                     'agent_id': self.agent_id
                 })
             except Exception as e:
+                logger.error(f"❌ Failed to reset agent: {e}")
                 return jsonify({
                     'success': False,
                     'error': str(e)
@@ -190,6 +192,38 @@ class NiyaBridge:
                 return jsonify({
                     'success': False,
                     'error': str(e)
+                })
+        
+        @self.flask_app.route('/debug', methods=['GET'])
+        def debug_status():
+            """Debug endpoint to check system status"""
+            try:
+                # Check Letta connection
+                letta_status = "disconnected"
+                agent_count = 0
+                if self.letta_client:
+                    try:
+                        agents = self.letta_client.agents.list()
+                        agent_count = len(agents)
+                        letta_status = "connected"
+                    except Exception as e:
+                        letta_status = f"error: {e}"
+                
+                return jsonify({
+                    'letta_client': self.letta_client is not None,
+                    'letta_status': letta_status,
+                    'agent_id': self.agent_id,
+                    'agent_count': agent_count,
+                    'letta_token_set': bool(os.getenv('LETTA_TOKEN')),
+                    'openai_key_set': bool(os.getenv('OPENAI_API_KEY')),
+                    'last_request_time': self.last_request_time,
+                    'request_spacing': self.request_spacing
+                })
+            except Exception as e:
+                return jsonify({
+                    'error': str(e),
+                    'letta_client': self.letta_client is not None,
+                    'agent_id': self.agent_id
                 })
     
     def initialize(self):
@@ -300,8 +334,26 @@ class NiyaBridge:
                         
         except Exception as e:
             logger.error(f"❌ Error getting Priya response: {e}")
-            # Simple fallback message
-            return "Sorry jaan, I'm having some technical difficulties right now... 💔"
+            logger.error(f"❌ Error type: {type(e).__name__}")
+            logger.error(f"❌ Agent ID: {self.agent_id}")
+            logger.error(f"❌ Letta client: {self.letta_client is not None}")
+            
+            # Try to recreate agent if it's missing
+            if "agent" in str(e).lower() or "not found" in str(e).lower():
+                try:
+                    logger.info("🔄 Attempting to recreate agent...")
+                    self.create_agent()
+                    # Retry the request once
+                    response = self.letta_client.agents.messages.create(
+                        agent_id=self.agent_id,
+                        messages=[{"role": "user", "content": message}]
+                    )
+                    return self._extract_response(response)
+                except Exception as retry_error:
+                    logger.error(f"❌ Retry failed: {retry_error}")
+            
+            # Simple fallback message with more info
+            return f"Sorry jaan, I'm having some technical difficulties right now... 💔 (Error: {type(e).__name__})"
 
 
     
