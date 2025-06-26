@@ -2,6 +2,7 @@
 letta-client>=0.1.170
 python-dotenv>=1.0.0
 requests>=2.31.0
+openai>=1.12.0
 
 # Bridge Service (Flask) - MINIMAL SETUP
 flask>=2.3.0

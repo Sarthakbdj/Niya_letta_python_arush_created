@@ -18,14 +18,17 @@ services:
           type: web
           name: niya-bridge
           envVarKey: PINECONE_API_KEY
+      - key: LETTA_TOKEN
+        fromService:
+          type: web
+          name: niya-bridge
+          envVarKey: LETTA_TOKEN
       - key: PINECONE_INDEX_NAME
         value: niya-production
       - key: EMBEDDING_MODEL
         value: text-embedding-3-small
-      - key: LETTA_BASE_URL
-        value: http://localhost:8283
       - key: LETTA_MODE
-        value: local
+        value: cloud
       - key: PORT
         value: 10000
 

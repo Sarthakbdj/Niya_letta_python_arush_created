@@ -24,11 +24,11 @@
    Go to Environment section and add these variables:
    ```
    OPENAI_API_KEY=your_openai_api_key_here
+   LETTA_TOKEN=your_letta_token_here
    PINECONE_API_KEY=your_pinecone_api_key_here
    PINECONE_INDEX_NAME=niya-production
    EMBEDDING_MODEL=text-embedding-3-small
-   LETTA_BASE_URL=http://localhost:8283
-   LETTA_MODE=local
+   LETTA_MODE=cloud
    ```
 
 4. **Deploy**
@@ -56,8 +56,15 @@
 
 ### Required Environment Variables
 - `OPENAI_API_KEY`: Your OpenAI API key from platform.openai.com
+- `LETTA_TOKEN`: Your Letta Cloud API token from letta.com
 - `PINECONE_API_KEY`: Your Pinecone API key (optional, for enhanced features)
 - `PORT`: Automatically set by Render.com
+
+### How to Get Letta Token:
+1. Go to [letta.com](https://letta.com) and sign up
+2. Navigate to your dashboard/API settings
+3. Generate a new API token
+4. Copy the token and use it as `LETTA_TOKEN` in Render
 
 ### Optional Environment Variables
 - `PINECONE_INDEX_NAME`: Index name for Pinecone (default: niya-production)

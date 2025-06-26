@@ -148,25 +148,41 @@ class NiyaBridge:
                 })
     
     def initialize(self):
-        """Initialize Letta client and Priya agent - SPEED OPTIMIZED"""
+        """Initialize Letta client and Priya agent - CLOUD ONLY"""
         try:
             logger.info("🚀 Initializing Niya-Python Bridge...")
             
-            # Initialize Letta client
+            # Initialize Letta client for cloud deployment
             if self.letta_token:
-                self.letta_client = Letta(base_url="http://localhost:8283")
+                # Cloud mode with token
+                logger.info("🌐 Using Letta Cloud API with token...")
+                self.letta_client = Letta(
+                    base_url="https://api.letta.com",
+                    token=self.letta_token
+                )
+            elif self.letta_base_url and "localhost" not in self.letta_base_url:
+                # Cloud mode without token (public endpoint)
+                logger.info(f"🌐 Using Letta API at {self.letta_base_url}...")
+                self.letta_client = Letta(base_url=self.letta_base_url)
             else:
-                self.letta_client = Letta(base_url="http://localhost:8283")
+                # Default to Letta Cloud API
+                logger.info("🌐 Using default Letta Cloud API...")
+                self.letta_client = Letta(base_url="https://api.letta.com")
             
-            # Clean up existing agents first for fresh start
-            logger.info("🧹 Cleaning up existing agents for fresh start...")
-            cleaned_count = self.cleanup_agents()
-            logger.info(f"✅ Cleaned up {cleaned_count} existing agents")
+            # Test connection
+            logger.info("🔍 Testing Letta connection...")
+            agents = self.letta_client.agents.list()
+            logger.info(f"✅ Letta connected - found {len(agents)} existing agents")
+            
+            # Clean up existing agents for fresh start
+            if len(agents) > 0:
+                logger.info("🧹 Cleaning up existing agents for fresh start...")
+                cleaned_count = self.cleanup_agents()
+                logger.info(f"✅ Cleaned up {cleaned_count} existing agents")
             
             # Create fresh Priya agent
             self.create_agent()
-            
-            logger.info("✅ Niya-Python Bridge initialized successfully!")
+            logger.info("✅ Niya-Python Bridge initialized with Letta!")
             return True
             
         except Exception as e:
@@ -174,7 +190,7 @@ class NiyaBridge:
             return False
     
     def create_agent(self):
-        """Create Priya agent - SPEED OPTIMIZED"""
+        """Create Priya agent - LETTA CLOUD"""
         try:
             # SPEED OPTIMIZATION: Minimal memory blocks for faster processing
             minimal_memory_blocks = [
@@ -205,7 +221,7 @@ class NiyaBridge:
             raise
     
     def get_priya_response(self, message: str) -> str:
-        """Get response from Priya agent - MAXIMUM SPEED OPTIMIZATION"""
+        """Get response from Priya agent - LETTA CLOUD"""
         try:
             if not self.agent_id:
                 self.create_agent()
@@ -231,8 +247,10 @@ class NiyaBridge:
                         
         except Exception as e:
             logger.error(f"❌ Error getting Priya response: {e}")
-            # SPEED OPTIMIZATION: Simple fallback without delay
+            # Simple fallback message
             return "Sorry jaan, I'm having some technical difficulties right now... 💔"
+
+
     
     def _extract_response(self, response) -> str:
         """Extract Priya's response - SPEED OPTIMIZED"""
