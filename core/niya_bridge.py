@@ -211,32 +211,15 @@ class NiyaBridge:
                 }
             ]
             
-            # Create agent with minimal configuration for MAXIMUM SPEED
-            # Try different model formats for Letta Cloud compatibility
-            try:
-                # First try with default model (no model parameter)
-                agent = self.letta_client.agents.create(
-                    name=f"niya_priya_speed_{int(time.time())}",
-                    memory_blocks=minimal_memory_blocks,  # Reduced from 6 to 2 blocks
-                    embedding=None,  # SPEED OPTIMIZATION: Remove embedding processing
-                    tools=[]  # No tools for maximum speed
-                )
-            except Exception:
-                # Fallback: try with different model format
-                try:
-                    agent = self.letta_client.agents.create(
-                        name=f"niya_priya_speed_{int(time.time())}",
-                        memory_blocks=minimal_memory_blocks,
-                        model="gpt-4",  # Try standard format
-                        embedding=None,
-                        tools=[]
-                    )
-                except Exception:
-                    # Final fallback: minimal parameters
-                    agent = self.letta_client.agents.create(
-                        name=f"niya_priya_speed_{int(time.time())}",
-                        memory_blocks=minimal_memory_blocks
-                    )
+            # Create agent with GPT-4o-mini model for MAXIMUM SPEED
+            # GPT-4o-mini is faster and more cost-effective than GPT-4
+            agent = self.letta_client.agents.create(
+                name=f"niya_priya_speed_{int(time.time())}",
+                memory_blocks=minimal_memory_blocks,  # Reduced from 6 to 2 blocks
+                model="gpt-4o-mini",  # GPT-4o-mini: fast, efficient, perfect for chat
+                embedding=None,  # SPEED OPTIMIZATION: Remove embedding processing
+                tools=[]  # No tools for maximum speed
+            )
             
             self.agent_id = agent.id
             logger.info(f"💖 Created speed-optimized Priya agent: {self.agent_id}")
