@@ -8,7 +8,7 @@ Expected by NestJS backend on port 1511
 import json
 import logging
 from typing import Dict, Any
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import time
 import re
@@ -32,7 +32,12 @@ class NiyaBridge:
         self.letta_client = None
         self.agent_id = None
         self.flask_app = Flask(__name__)
-        CORS(self.flask_app)  # Enable CORS for NestJS backend
+        # Enable CORS completely - allow all origins, methods, and headers
+        CORS(self.flask_app, 
+             origins="*",
+             methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+             allow_headers=["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"],
+             supports_credentials=True)
         
         # Configuration
         self.letta_base_url = os.getenv('LETTA_BASE_URL', 'https://api.letta.com')
@@ -48,6 +53,25 @@ class NiyaBridge:
         
         # Setup Flask routes
         self.setup_routes()
+        
+        # Add global OPTIONS handler for CORS preflight
+        @self.flask_app.before_request
+        def handle_preflight():
+            if request.method == "OPTIONS":
+                response = make_response()
+                response.headers.add("Access-Control-Allow-Origin", "*")
+                response.headers.add('Access-Control-Allow-Headers', "*")
+                response.headers.add('Access-Control-Allow-Methods', "*")
+                return response
+        
+        # Add CORS headers to all responses
+        @self.flask_app.after_request
+        def after_request(response):
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With,Accept,Origin')
+            response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+            return response
         
     def setup_routes(self):
         """Setup Flask routes for Niya backend integration - SPEED OPTIMIZED + MULTI-MESSAGE"""
