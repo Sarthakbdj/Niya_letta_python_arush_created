@@ -119,7 +119,8 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:1511';
+        // Use current origin for API calls (works on Render.com)
+        const API_BASE = window.location.origin;
         let agentId = null;
 
         // Check server connection
@@ -142,11 +143,10 @@
         // Get agent information
         async function getAgentInfo() {
             try {
-                const response = await fetch(`${API_BASE}/agent/info`);
+                const response = await fetch(`${API_BASE}/health`);
                 if (response.ok) {
-                    const agentInfo = await response.json();
-                    agentId = agentInfo.id;
-                    document.getElementById('agentDetails').textContent = `${agentInfo.name} (${agentInfo.model})`;
+                    const healthInfo = await response.json();
+                    document.getElementById('agentDetails').textContent = `${healthInfo.service} (${healthInfo.version})`;
                     document.getElementById('agentInfo').style.display = 'block';
                 }
             } catch (error) {
@@ -171,14 +171,13 @@
             messageInput.value = '';
             
             try {
-                const response = await fetch(`${API_BASE}/message`, {
+                const response = await fetch(`${API_BASE}/api/message`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        message: message,
-                        agent_id: agentId
+                        message: message
                     })
                 });
                 

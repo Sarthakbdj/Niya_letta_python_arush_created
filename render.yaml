@@ -1,0 +1,52 @@
+services:
+  # Main Niya Bridge Service
+  - type: web
+    name: niya-bridge
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --config gunicorn_config.py core.production_app:application
+    envVars:
+      - key: OPENAI_API_KEY
+        fromService:
+          type: web
+          name: niya-bridge
+          envVarKey: OPENAI_API_KEY
+      - key: PINECONE_API_KEY
+        fromService:
+          type: web
+          name: niya-bridge
+          envVarKey: PINECONE_API_KEY
+      - key: PINECONE_INDEX_NAME
+        value: niya-production
+      - key: EMBEDDING_MODEL
+        value: text-embedding-3-small
+      - key: LETTA_BASE_URL
+        value: http://localhost:8283
+      - key: LETTA_MODE
+        value: local
+      - key: PORT
+        value: 10000
+
+  # Static Frontend
+  - type: static
+    name: niya-frontend
+    staticPublishPath: deployment/static
+    buildCommand: echo "Static files ready"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+  # PostgreSQL Database (if needed)
+  - type: pserv
+    name: niya-postgres
+    env: docker
+    region: oregon
+    plan: starter
+    dockerfilePath: ./deployment/Dockerfile.postgres
+    
+databases:
+  - name: niya-db
+    plan: starter 

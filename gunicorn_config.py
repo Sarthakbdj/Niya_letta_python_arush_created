@@ -3,8 +3,10 @@ Gunicorn Configuration for ULTRA-FAST Production Niya Bridge
 Optimized for maximum performance and reliability
 """
 
-# Server socket
-bind = "0.0.0.0:1511"
+# Server socket - Use PORT from Render.com environment
+import os
+port = os.environ.get('PORT', '8000')
+bind = f"0.0.0.0:{port}"
 backlog = 2048
 
 # Worker processes
