@@ -97,6 +97,27 @@ class NiyaBridge:
                     'error': str(e)
                 })
         
+        @self.flask_app.route('/', methods=['GET'])
+        def homepage():
+            """Homepage with API documentation"""
+            return jsonify({
+                'service': 'Niya-Python Bridge',
+                'status': 'running',
+                'description': 'AI Girlfriend Chat API',
+                'endpoints': {
+                    'POST /message': 'Send a message to Priya AI',
+                    'GET /health': 'Health check',
+                    'POST /reset': 'Reset the AI agent',
+                    'POST /cleanup': 'Cleanup all agents'
+                },
+                'usage': {
+                    'chat': 'POST /message with {"message": "your text"}',
+                    'example': 'curl -X POST https://niya-python.onrender.com/message -H "Content-Type: application/json" -d \'{"message": "Hello Priya!"}\''
+                },
+                'agent_id': self.agent_id,
+                'optimizations': 'Speed optimized for <7s responses'
+            })
+
         @self.flask_app.route('/health', methods=['GET'])
         def health_check():
             """Health check endpoint"""
