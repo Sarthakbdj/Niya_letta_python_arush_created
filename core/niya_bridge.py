@@ -364,8 +364,12 @@ class NiyaBridge:
             logger.error(f"❌ Failed to cleanup agents: {e}")
             return 0
         
-    def run(self, host='localhost', port=1511):
+    def run(self, host='0.0.0.0', port=None):
         """Run the bridge service - SPEED OPTIMIZED"""
+        # Use Render's PORT environment variable or default to 1511
+        if port is None:
+            port = int(os.getenv('PORT', 1511))
+        
         logger.info(f"🌉 Starting SPEED-OPTIMIZED Niya-Python Bridge on {host}:{port}")
         # SPEED OPTIMIZATION: Production settings for Flask
         self.flask_app.run(host=host, port=port, debug=False, threaded=True)
@@ -388,7 +392,7 @@ def main():
             return
         
         print("✅ Bridge initialized successfully!")
-        print("🔗 Expected by Niya Backend on: http://localhost:1511")
+        print(f"🔗 Running on: http://0.0.0.0:{os.getenv('PORT', 1511)}")
         print("📡 Main endpoint: POST /message")
         print("🏥 Health check: GET /health")
         print("🔄 Reset agent: POST /reset")
